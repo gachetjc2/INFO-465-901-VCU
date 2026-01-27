@@ -87,3 +87,5 @@ function promptForNumber() {
 // Start the program
 console.log("Mean/Median Calculator (integers only). Type 'q' to quit.\n");
 promptForNumber();
+
+git log --oneline
