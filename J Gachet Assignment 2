@@ -1,1 +1,101 @@
+/**
+ * product_condition.js
+ *
+ * Prompts the user for integers until they enter q (or Q) to quit.
+ * Echoes the integers back to the user.
+ * Determines if the product of any two entered integers equals a third integer.
+ *
+ * Run: node product_condition.js
+ */
+
+"use strict";
+
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+// Store all valid integers the user enters
+const numbers = [];
+
+/**
+ * Returns true if s is a valid integer string (optional leading + or -).
+ */
+function isIntegerString(s) {
+  return /^[-+]?\d+$/.test(s);
+}
+
+/**
+ * Checks whether any two integers in arr multiply to a third integer in arr.
+ * Prints the first match found like: "Condition is met: 3 x 9 = 27"
+ * Returns true if found, false otherwise.
+ */
+function conditionMet(arr) {
+  // Need at least 3 numbers to have "two numbers equal a third"
+  if (arr.length < 3) return false;
+
+  // Use a Set for fast lookup of "is product in the list"
+  const set = new Set(arr);
+
+  // Try every pair (i, j) with i < j
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      const a = arr[i];
+      const b = arr[j];
+      const product = a * b;
+
+      if (set.has(product)) {
+        console.log(`Condition is met: ${a} x ${b} = ${product}`);
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function ask() {
+  rl.question("Enter an integer (or q to quit): ", (answerRaw) => {
+    const answer = answerRaw.trim();
+
+    // Quit on q or Q
+    if (answer.toLowerCase() === "q") {
+      console.log("\nYou entered:");
+      if (numbers.length === 0) {
+        console.log("(no integers entered)");
+      } else {
+        console.log(numbers.join(", "));
+      }
+
+      // Check condition and print required message
+      if (!conditionMet(numbers)) {
+        console.log("Condition was not met");
+      }
+
+      rl.close();
+      return;
+    }
+
+    // Validate integer input
+    if (!isIntegerString(answer)) {
+      console.log("Error: Please enter an integer or q to quit.");
+      return ask();
+    }
+
+    // Safe to parse
+    const value = parseInt(answer, 10);
+    numbers.push(value);
+
+    // Echo entered integer back to the user
+    console.log(`You entered: ${value}`);
+
+    // Continue prompting
+    ask();
+  });
+}
+
+// Start
+ask();
 
